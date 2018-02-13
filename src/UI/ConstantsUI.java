@@ -57,8 +57,6 @@ public class ConstantsUI {
     /**
      * 主窗口图标
      */
-    public static final Image IMAGE_ICON = Toolkit.getDefaultToolkit()
-            .getImage(AppMainWindow.class.getResource("/"));
-
-
+//    public static final Image IMAGE_ICON = Toolkit.getDefaultToolkit()
+//            .getImage(AppMainWindow.class.getResource("/"));
 }

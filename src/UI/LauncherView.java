@@ -1,5 +1,7 @@
 package UI;
 
+import logic.Communication;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,20 +13,15 @@ import java.net.Socket;
 public class LauncherView {
     private JFrame frame;
 
-    private static JLayeredPane layeredPane;
-    private static JPanel bgPanel;
-    private static JPanel miniPanel;
-    private static MyIconButton closeButton;
-    private static MyIconButton loginButton;
     public static void main(String[] args) {
-        EventQueue.invokeLater(()->{
+        EventQueue.invokeLater(()-> {
                 try {
                     LauncherView launcherView = new LauncherView();
                     launcherView.frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            });
+        });
     }
 
     private LauncherView() {
@@ -53,14 +50,13 @@ public class LauncherView {
         frame.setTitle(ConstantsUI.APP_NAME);
         frame.setBackground(new Color(0, 0, 0, 0));
 
-        layeredPane = new JLayeredPane();
+        JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setOpaque(false);
         layeredPane.setBounds(ConstantsUI.LAUNCHER_VIEW_X, ConstantsUI.LAUNCHER_VIEW_Y, ConstantsUI.LAUNCHER_VIEW_WIDTH,
                 ConstantsUI.LAUNCHER_VIEW_HEIGHT);
         frame.add(layeredPane);
 
-
-        bgPanel = new JPanel();
+        JPanel bgPanel = new JPanel();
         bgPanel.setOpaque(false);
         bgPanel.setBounds(ConstantsUI.LAUNCHER_VIEW_X, ConstantsUI.LAUNCHER_VIEW_Y, ConstantsUI.LAUNCHER_VIEW_WIDTH,
                 ConstantsUI.LAUNCHER_VIEW_HEIGHT);
@@ -70,14 +66,14 @@ public class LauncherView {
 
         layeredPane.add(bgPanel, new Integer(0));
 
-        miniPanel = new JPanel();
+        JPanel miniPanel = new JPanel();
         miniPanel.setBounds(ConstantsUI.LAUNCHER_VIEW_X, ConstantsUI.LAUNCHER_VIEW_Y, ConstantsUI.LAUNCHER_VIEW_WIDTH,
                 ConstantsUI.LAUNCHER_VIEW_HEIGHT);
         miniPanel.setLayout(null);
         miniPanel.setOpaque(false);
         layeredPane.add(miniPanel, new Integer(1));
 
-        closeButton = new MyIconButton(ConstantsUI.ICON_CLOSE_NORMAL, ConstantsUI.ICON_CLOSE_DOWN,
+        MyIconButton closeButton = new MyIconButton(ConstantsUI.ICON_CLOSE_NORMAL, ConstantsUI.ICON_CLOSE_DOWN,
                 ConstantsUI.ICON_CLOSE_HIGHLIGHT, "");
         closeButton.setBounds(355, 8, 20, 20);
         closeButton.addActionListener((e)-> System.exit(0));
@@ -93,7 +89,7 @@ public class LauncherView {
         username.setVisible(true);
         miniPanel.add(username);
 
-        loginButton = new MyIconButton(ConstantsUI.ICON_LOGIN_NORMAL, ConstantsUI.ICON_LOGIN_DOWN,
+        MyIconButton loginButton = new MyIconButton(ConstantsUI.ICON_LOGIN_NORMAL, ConstantsUI.ICON_LOGIN_DOWN,
                 ConstantsUI.ICON_LOGIN_HIGHLIGHT, "");
         loginButton.setBounds(160, 222, 80, 30);
         miniPanel.add(loginButton);
@@ -118,35 +114,15 @@ public class LauncherView {
         });
 
         loginButton.addActionListener((e) ->{
-            final String IP_ADDR = "139.199.12.213";
-            final int PORT = 12345;
-            Socket socket = null;
             try {
-                socket = new Socket(IP_ADDR, PORT);
-                DataInputStream input = new DataInputStream(socket.getInputStream());
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 String str = username.getText();
-                out.writeUTF(str);
-                String ret = input.readUTF();
-                if (ret.equals("10")) {
+                if (Communication.sendMessage(str).equals("10")) {
                     JOptionPane.showMessageDialog(null, "success");
                 } else {
                     JOptionPane.showMessageDialog(null, "fail");
                 }
-
-                out.close();
-                input.close();
-
-            } catch (Exception e2) {
-                System.out.println("客户端异常：" + e2.getMessage());
-            }finally {
-                if (socket != null) {
-                    try {
-                        socket.close();
-                    } catch (IOException e4) {
-                        System.out.println("客户端 finally 异常:" + e4.getMessage());
-                    }
-                }
+            } catch (Exception e1) {
+                System.out.println("客户端异常：" + e1.getMessage());
             }
         });
     }
